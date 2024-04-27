@@ -22,7 +22,7 @@ jobs:
       - name: Install requirements
         run: pip install -r requirements.txt
       - name: Run django check
-        run: ./backend/manage.py check
+        run: ./manage.py check
 
   ng:
     runs-on: ubuntu-latest
