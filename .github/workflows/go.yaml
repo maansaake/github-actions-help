@@ -56,7 +56,7 @@ jobs:
       - name: Upload coverega report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: coverage.html
+          name: go-coverage-report
+          path: sample-go-app/coverage.html
       - name: Build
-        run: go build
+        run: go build -o sample-go-app ./cmd
