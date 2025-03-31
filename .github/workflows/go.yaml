@@ -42,15 +42,11 @@ jobs:
             ~/.cache/go-build
           key: go-build-${{ github.sha }}
           restore-keys: go-build-
-      - name: debugg
-        run: |
-          echo $HOME
-          echo $PWD
-          ls -l
       - name: Lint
         uses: golangci/golangci-lint-action@v7
         with:
           version: v2.0
+          working-directory: sample-go-app
       - name: Install dependencies
         run: go mod download
       - name: Run tests
