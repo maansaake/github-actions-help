@@ -42,7 +42,7 @@ jobs:
             ~/.cache/go-build
           key: go-build-${{ github.sha }}
           restore-keys: go-build-
-      - name: debug
+      - name: debugg
         run: |
           echo $HOME
           echo $PWD
