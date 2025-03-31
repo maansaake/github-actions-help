@@ -10,7 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    working-directory: ./sample-go-app
+    defaults:
+      run:
+        working-directory: ./sample-go-app
     strategy:
       matrix:
         # these aliases make sure to test both latest and previous minor 
