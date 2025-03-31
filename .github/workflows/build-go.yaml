@@ -1,0 +1,42 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # these aliases make sure to test both latest and previous minor 
+        # versions.
+        go-version-alias: ["stable", "oldstable"]
+    steps:
+      - uses: actions/checkout@v4
+      # Disable the builtin caching since it uses the hash of the go.sum file
+      # to determine if the cache is valid. This is not ideal since the go.sum
+      # file is updated every time a new version of a dependency is downloaded.
+      # Not when your code changes.
+      - name: Set up Golang ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          go-version: ${{ matrix.go-version-alias }}
+          cache: false
+      # Use restore-keys to always use a cache that was created with the same
+      # prefix.
+      - name: Cache go modules and the buildcache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-build-${{ github.sha }}
+          restore-keys: go-build-
+      - name: Install dependencies
+        run: go mod download
+      - name: Build
+        run: go build ./sample-go-app -o sample-go-app

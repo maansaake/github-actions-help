@@ -2,25 +2,23 @@ name: image
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
 
 env:
   IMAGE_NAME_PREFIX: ${{ github.repository }}
 
-jobs:
-  docker:
-    permissions:
-      contents: read
-      packages: write
+permissions:
+  contents: read
+  packages: write
 
+jobs:
+  build-image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub packages
@@ -36,11 +34,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}-appname
 
-      - name: Build and push
+      - name: Build and push go app
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: sample-go-app
+          file: sample-go-app/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
