@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    working-directory: ./sample-go-app
     strategy:
       matrix:
         # these aliases make sure to test both latest and previous minor 
@@ -39,6 +40,6 @@ jobs:
       - name: Install dependencies
         run: go mod download
       - name: Run tests
-        run: go test ./sample-go-app/...
+        run: go test ./...
       - name: Build
-        run: go build ./sample-go-app -o sample-go-app
+        run: go build
