@@ -40,5 +40,7 @@ jobs:
           context: sample-go-app
           file: sample-go-app/Dockerfile
           push: true
+          build-args: |
+            VERSION=${{ github.sha }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
