@@ -21,8 +21,8 @@ jobs:
       # to determine if the cache is valid. This is not ideal since the go.sum
       # file is updated every time a new version of a dependency is downloaded.
       # Not when your code changes.
-      - name: Set up Golang ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Set up Golang ${{ matrix.go-version-alias }}
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version-alias }}
           cache: false
@@ -38,5 +38,7 @@ jobs:
           restore-keys: go-build-
       - name: Install dependencies
         run: go mod download
+      - name: Run tests
+        run: go test ./sample-go-app/...
       - name: Build
         run: go build ./sample-go-app -o sample-go-app
