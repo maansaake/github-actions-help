@@ -17,7 +17,7 @@ RUN --mount=type=cache,target="/root/.cache/go-build" \
   # -s disables symbol table
   # -w disables DWARF generation
   # both reduce the final binary size
-  CGO_ENABLED=0 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -extldflags=-static"
+  CGO_ENABLED=0 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -extldflags=-static" -o /sample-go-app ./cmd
 
 FROM gcr.io/distroless/static-debian12:nonroot
 
