@@ -52,9 +52,7 @@ jobs:
       - name: Run tests
         run: go test ./... -coverprofile=coverage.out
       - name: Generate coverage report
-        run: |
-          go test ./... -coverprofile=coverage.out
-          go tool cover -html=coverage.out -o coverage.html
+        run: go tool cover -html=coverage.out -o coverage.html
       - name: Upload coverega report
         uses: actions/upload-artifact@v4
         with:
