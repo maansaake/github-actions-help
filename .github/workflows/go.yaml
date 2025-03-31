@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./sample-go-app
+        working-directory: sample-go-app
     strategy:
       matrix:
         # these aliases make sure to test both latest and previous minor 
@@ -42,6 +42,11 @@ jobs:
             ~/.cache/go-build
           key: go-build-${{ github.sha }}
           restore-keys: go-build-
+      - name: debug
+        run: |
+          echo $HOME
+          echo $PWD
+          ls -l
       - name: Lint
         uses: golangci/golangci-lint-action@v7
         with:
