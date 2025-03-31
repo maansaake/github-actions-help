@@ -32,7 +32,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}-appname
+          images: ghcr.io/${{ env.IMAGE_NAME_PREFIX }}-appname
 
       - name: Build and push go app
         uses: docker/build-push-action@v5
