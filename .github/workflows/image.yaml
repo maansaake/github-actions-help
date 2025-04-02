@@ -35,7 +35,7 @@ jobs:
           images: ghcr.io/${{ env.IMAGE_NAME_PREFIX }}-appname
 
       - name: Build and push go app
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: sample-go-app
           file: sample-go-app/Dockerfile
