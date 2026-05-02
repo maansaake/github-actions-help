@@ -1,5 +1,8 @@
 # github-actions-help
 
+[![Main branch protection](https://github.com/maansaake/github-actions-help/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/maansaake/github-actions-help/actions/workflows/main.yaml)
+[![Code scanning](https://github.com/maansaake/github-actions-help/actions/workflows/code-scanning.yaml/badge.svg?branch=main)](https://github.com/maansaake/github-actions-help/actions/workflows/code-scanning.yaml)
+
 A reference repository demonstrating GitHub Actions workflows for Go and Python applications. It includes two sample apps:
 
 - `sample-go-app/` — a Go application with a Dockerfile
