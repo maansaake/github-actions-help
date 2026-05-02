@@ -38,7 +38,7 @@ libcomps==0.1.23
 libdnf==0.75.0
 libdnf5==5.2.18.0
 louis==3.33.0
-lxml==6.0.1
+lxml==6.1.0
 Mako==1.2.3
 MarkupSafe==3.0.2
 nftables==0.1
