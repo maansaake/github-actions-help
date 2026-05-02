@@ -23,12 +23,7 @@ pull request ──► pull-request.yaml ──► go.yaml
 
                  lint.yaml (go linting + SARIF upload)
 
-gh-release (create GitHub release)
-                      │
-              release published
-                      │
-                      ▼
-                image.yaml (build + push to ghcr.io)
+gh-release (create GitHub release) ──► image.yaml (build + push to ghcr.io)
 
 dependabot PR ─► dependabot-auto-approve.yaml
 ```
