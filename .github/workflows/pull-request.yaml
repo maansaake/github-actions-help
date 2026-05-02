@@ -1,6 +1,6 @@
 name: Pull request validation
 
-run-name: "Pull request validation - ${{ github.event.pull_request.number }}"
+run-name: "Pull request validation: ${{ github.event.pull_request.number }}"
 
 on:
   pull_request:
@@ -10,7 +10,6 @@ on:
 permissions:
   contents: read
   packages: write
-  security-events: write
 
 jobs:
   go:
@@ -23,7 +22,6 @@ jobs:
 
   image:
     name: Image
-    needs: go
     uses: ./.github/workflows/image.yaml
     with:
       version: "latest"
