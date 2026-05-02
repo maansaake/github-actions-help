@@ -23,7 +23,6 @@ jobs:
 
   image:
     name: Image
-    needs: go
     uses: ./.github/workflows/image.yaml
     with:
       push: false
