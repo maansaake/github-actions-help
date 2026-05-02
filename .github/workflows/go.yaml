@@ -58,4 +58,4 @@ jobs:
           path: sample-go-app/coverage.html
 
       - name: Build
-        run: go build -o sample-go-app ./cmd
+        run: go build -o sample-go-app
