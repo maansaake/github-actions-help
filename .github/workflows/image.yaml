@@ -13,9 +13,12 @@ on:
         required: false
         type: boolean
         default: false
+  release:
+    types:
+      - published
 
 concurrency:
-  group: image-build-${{ inputs.version }}
+  group: image-build-${{ inputs.version || github.ref_name }}
   cancel-in-progress: false
 
 permissions:
@@ -48,7 +51,7 @@ jobs:
         with:
           context: sample-go-app
           file: sample-go-app/Dockerfile
-          push: ${{ inputs.push }}
+          push: ${{ inputs.push || github.event_name == 'release' }}
           build-args: |
             VERSION=${{ github.sha }}
           tags: ${{ steps.meta.outputs.tags }}
