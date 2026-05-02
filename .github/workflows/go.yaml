@@ -3,8 +3,8 @@ name: Golang
 on:
   workflow_call:
 
-concurrency:
-  group: go-build
+permissions:
+  contents: read
 
 jobs:
   build:

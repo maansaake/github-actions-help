@@ -5,9 +5,18 @@ on:
     inputs:
       version:
         description: "Version to tag the image with"
-        required: true
+        required: false
         type: string
         default: "latest"
+      push:
+        description: "Whether to push the image to the registry"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: image-build-${{ inputs.version }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -39,7 +48,7 @@ jobs:
         with:
           context: sample-go-app
           file: sample-go-app/Dockerfile
-          push: true
+          push: ${{ inputs.push }}
           build-args: |
             VERSION=${{ github.sha }}
           tags: ${{ steps.meta.outputs.tags }}

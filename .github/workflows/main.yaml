@@ -1,0 +1,28 @@
+name: Main branch protection
+
+run-name: "Main branch protection: ${{ github.event.head_commit.message }}"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  go:
+    name: Golang
+    uses: ./.github/workflows/go.yaml
+
+  py:
+    name: Python
+    uses: ./.github/workflows/py.yaml
+
+  image:
+    name: Python
+    needs: go
+    uses: ./.github/workflows/image.yaml
+    with:
+      push: false

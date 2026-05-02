@@ -1,5 +1,7 @@
 name: Release
 
+run-name: "Release - ${{ github.ref_name }}"
+
 on:
   push:
     tags:
@@ -9,8 +11,15 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  image:
+    name: Build and push image
+    uses: ./.github/workflows/image.yaml
+    with:
+      push: true
+
+  gh-release:
     name: Create Release
+    needs: image
     runs-on: ubuntu-latest
 
     steps:
