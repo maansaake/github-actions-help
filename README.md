@@ -7,6 +7,35 @@ A reference repository demonstrating GitHub Actions workflows for Go and Python 
 
 ---
 
+## Repository layout
+
+```text
+.
+├── .github/
+│   ├── dependabot.yml
+│   └── workflows/
+│       ├── auto-update-pr-branches.yaml
+│       ├── code-scanning.yaml
+│       ├── dependabot-auto-approve.yaml
+│       ├── go.yaml
+│       ├── image.yaml
+│       ├── main.yaml
+│       ├── pull-request.yaml
+│       └── py.yaml
+├── sample-go-app/
+│   ├── Dockerfile
+│   ├── go.mod
+│   ├── go.sum
+│   ├── internal/
+│   └── main.go
+├── sample-py-app/
+│   ├── main.py
+│   └── requirements.txt
+└── README.md
+```
+
+---
+
 ## Workflows overview
 
 ```text
@@ -14,16 +43,16 @@ push to main ──► main.yaml ──► go.yaml
                            └──► py.yaml
                            └──► image.yaml (build only, no push)
 
-                 lint.yaml (go linting + SARIF upload)
-                 auto-update-pr-branches.yaml (rebase open PRs)
+                  code-scanning.yaml (go linting + SARIF upload)
+                  auto-update-pr-branches.yaml (rebase open PRs)
 
 pull request ──► pull-request.yaml ──► go.yaml
                                    └──► py.yaml
                                    └──► image.yaml (build only, no push)
 
-                 lint.yaml (go linting + SARIF upload)
+                  code-scanning.yaml (go linting + SARIF upload)
 
-gh-release (create GitHub release) ──► image.yaml (build + push to ghcr.io)
+release published ──► image.yaml (build + push to ghcr.io)
 
 dependabot PR ─► dependabot-auto-approve.yaml
 ```
@@ -42,8 +71,6 @@ Orchestrates the core CI pipeline on every commit to `main`. Calls the three reu
 2. `py.yaml` — set up Python and install dependencies
 3. `image.yaml` — build the Docker image (does **not** push)
 
-The image build only runs after `go.yaml` passes (`needs: go`).
-
 ---
 
 ### `pull-request.yaml` — Pull request validation
@@ -58,19 +85,11 @@ Runs the same pipeline as `main.yaml` to validate every PR before it can be merg
 
 ---
 
-### `lint.yaml` — Linting
+### `code-scanning.yaml` — Code scanning
 
 **Trigger:** push to `main` and pull requests targeting `main`
 
 Runs [`golangci-lint`](https://golangci-lint.run/) (v2.12.0) against `sample-go-app/` and uploads the results as a SARIF report to GitHub code scanning (under Security → Code scanning). The upload step runs even if linting fails (`if: always()`).
-
----
-
-### `release.yaml` — Release
-
-**Trigger:** push of any tag matching `v*`
-
-Creates a GitHub Release for the tag with auto-generated release notes (`gh release create --generate-notes`). Publishing the release then triggers `image.yaml` to build and push the Docker image (see below).
 
 ---
 
@@ -132,7 +151,7 @@ Sets up `sample-py-app/` for the configured Python version (currently `3.14`). S
 
 Builds the Docker image for `sample-go-app/` and optionally pushes it to the GitHub Container Registry (`ghcr.io`).
 
-**Triggers:** `workflow_call` (from `main.yaml`, `pull-request.yaml`, and `release.yaml`) or directly on `release: published`. When triggered by the release event, `push` is automatically set to `true`.
+**Triggers:** `workflow_call` (from `main.yaml` and `pull-request.yaml`) or directly on `release: published`. When triggered by the release event, `push` is automatically set to `true`.
 
 Inputs (only applicable when called via `workflow_call`):
 
@@ -150,6 +169,14 @@ Steps:
 5. Build (and push if `push: true`) the image from `sample-go-app/Dockerfile`, passing `VERSION=${{ github.sha }}` as a build argument.
 
 A concurrency group (`image-build-<version>`) ensures that parallel image builds for the same version do not interfere with each other.
+
+---
+
+## Why `code-scanning.yaml` runs on both PRs and `main` pushes
+
+GitHub code scanning treats pull request scans and branch scans as separate result streams, so both are needed for full coverage. Running on pull requests gives review-time feedback before merge, and running on `main` ensures the default branch always has fresh, authoritative alerts for Security reporting and branch-level visibility.
+
+Keeping both triggers in the same workflow file ensures the exact same linting and SARIF upload logic is used in both contexts, which prevents drift and avoids mismatched scan behavior between pre-merge and post-merge checks.
 
 ---
 
