@@ -2,6 +2,8 @@ name: Code scanning
 
 run-name: "Linting: ${{ github.event.head_commit.message }}"
 
+run-name: "Linting: ${{ github.event.head_commit.message }}"
+
 on:
   push:
     branches:
