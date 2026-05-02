@@ -9,7 +9,7 @@ A reference repository demonstrating GitHub Actions workflows for Go and Python 
 
 ## Workflows overview
 
-```
+```text
 push to main ──► main.yaml ──► go.yaml
                            └──► py.yaml
                            └──► image.yaml (build only, no push)
