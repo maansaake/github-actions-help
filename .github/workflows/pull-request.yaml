@@ -22,7 +22,6 @@ jobs:
 
   image:
     name: Image
-    needs: go
     uses: ./.github/workflows/image.yaml
     with:
       version: "latest"
