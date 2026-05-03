@@ -95,11 +95,11 @@ orchestrators do not need to grant more than `contents: read` by default.
 These workflows are triggered independently and do not participate in the
 orchestrator/reusable pattern.
 
-### `lint.yaml` — Go linting
+### `code-scanning.yaml` — Custom code scanning with SARIF upload
 
 **Triggers:** `push` to `main`, `pull_request` targeting `main`
 
-Runs `golangci-lint` on `sample-go-app` and uploads the SARIF report to GitHub Code
+Runs `golangci-lint` and `govulncheck` on `sample-go-app` and uploads the SARIF report to GitHub Code
 Scanning via `github/codeql-action/upload-sarif`. The upload step uses `if: always()` so
 the report is uploaded even when linting finds issues.
 
