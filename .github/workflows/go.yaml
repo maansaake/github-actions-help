@@ -38,7 +38,7 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
-          key: go-build-${{ github.sha }}
+          key: go-build-${{ matrix.go-version-alias }}-${{ github.sha }}
           restore-keys: go-build-
 
       - name: Install dependencies
