@@ -15,9 +15,12 @@ A reference repository demonstrating GitHub Actions workflows for Go and Python 
 ```text
 .
 ├── .github/
+│   ├── copilot/
+│   │   └── mcp.json
 │   ├── dependabot.yml
 │   └── workflows/
 │       ├── auto-update-pr-branches.yaml
+│       ├── copilot-setup-steps.yml
 │       ├── code-scanning.yaml
 │       ├── dependabot-auto-approve.yaml
 │       ├── go.yaml
@@ -48,12 +51,14 @@ push to main ──► main.yaml ──► go.yaml
 
                   code-scanning.yaml (go linting + SARIF upload)
                   auto-update-pr-branches.yaml (rebase open PRs)
+                  copilot-setup-steps.yml (prepare Copilot cloud agent)
 
 pull request ──► pull-request.yaml ──► go.yaml
                                    └──► py.yaml
                                    └──► image.yaml (build only, no push)
 
                   code-scanning.yaml (go linting + SARIF upload)
+                  copilot-setup-steps.yml (prepare Copilot cloud agent)
 
 release published ──► image.yaml (build + push to ghcr.io)
 
@@ -116,6 +121,23 @@ Automates merging of Dependabot PRs:
 - **Major updates** — leaves a comment asking for manual review.
 
 Uses a GitHub App (Jeeves) for authentication. Only runs for PRs authored by `dependabot[bot]` in the `maansaake/github-actions-help` repository.
+
+---
+
+### `copilot-setup-steps.yml` — Copilot setup steps
+
+**Trigger:** manual dispatch, updates to the workflow file itself
+
+Prepares the Copilot cloud agent environment for this mixed Go/Python repository:
+
+1. Checks out the repository.
+2. Sets up Go from `sample-go-app/go.mod`.
+3. Sets up Python 3.14 with pip caching.
+4. Caches Go modules and the Go build cache.
+5. Downloads Go dependencies for `sample-go-app/` and its `tools/` module, plus Python dependencies for `sample-py-app/`.
+6. Installs `golangci-lint` and warms up `govulncheck`.
+
+`.github/copilot/mcp.json` configures the GitHub MCP server so the Copilot agent can use GitHub tools while working in this repository.
 
 ---
 
