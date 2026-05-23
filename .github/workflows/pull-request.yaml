@@ -28,5 +28,5 @@ jobs:
     name: Image
     uses: ./.github/workflows/image.yaml
     with:
-      version: "latest"
+      version: "${{ github.event.pull_request.number }}"
       push: false
