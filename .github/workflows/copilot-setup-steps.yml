@@ -1,0 +1,55 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version-file: sample-go-app/go.mod
+          cache: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.14"
+          cache: "pip"
+          cache-dependency-path: sample-py-app/requirements.txt
+
+      - name: Cache Go modules and build cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: copilot-go-${{ hashFiles('sample-go-app/go.sum', 'sample-go-app/tools/go.sum') }}
+          restore-keys: copilot-go-
+
+      - name: Download dependencies
+        run: |
+          go -C sample-go-app mod download
+          go -C sample-go-app mod download -modfile tools/go.mod
+          pip install -r sample-py-app/requirements.txt
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.0
+
+      - name: Warm up govulncheck
+        run: go -C sample-go-app tool -modfile tools/go.mod govulncheck -version
