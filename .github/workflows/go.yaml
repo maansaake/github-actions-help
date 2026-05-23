@@ -14,9 +14,9 @@ jobs:
         working-directory: sample-go-app
     strategy:
       matrix:
-        # these aliases make sure to test both latest and previous minor 
+        # these aliases make sure to test both latest and previous minor
         # versions. Useful for library authors to make sure their code works with the latest versions of Go.
-        go-version-alias: [ "stable", "oldstable" ]
+        go-version-alias: ["stable", "oldstable"]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -35,6 +35,7 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: go-mod-${{ hashFiles('sample-go-app/go.sum') }}
+
       - name: Go build cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
