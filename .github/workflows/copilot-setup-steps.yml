@@ -34,15 +34,13 @@ jobs:
           cache: "pip"
           cache-dependency-path: sample-py-app/requirements.txt
 
-      - name: Restore Go module cache
-        id: go-mod-cache
-        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      - name: Go module cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/go/pkg/mod
           key: copilot-go-mod-${{ hashFiles('sample-go-app/go.sum', 'sample-go-app/tools/go.sum') }}
-      - name: Restore Go build cache
-        id: go-build-cache
-        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      - name: Go build cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/go-build
           key: copilot-go-build-${{ hashFiles('sample-go-app/**/*.go', 'sample-go-app/go.mod', 'sample-go-app/go.sum', 'sample-go-app/tools/go.mod', 'sample-go-app/tools/go.sum') }}
@@ -54,21 +52,9 @@ jobs:
           go -C sample-go-app mod download
           go -C sample-go-app mod download -modfile tools/go.mod
           pip install -r sample-py-app/requirements.txt
-      - name: Save Go module cache
-        if: steps.go-mod-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ steps.go-mod-cache.outputs.cache-primary-key }}
 
       - name: Install golangci-lint
         run: make install-lint
 
       - name: Warm up govulncheck
         run: go -C sample-go-app tool -modfile tools/go.mod govulncheck -version
-      - name: Save Go build cache
-        if: steps.go-build-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
-        with:
-          path: ~/.cache/go-build
-          key: ${{ steps.go-build-cache.outputs.cache-primary-key }}
