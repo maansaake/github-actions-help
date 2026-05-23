@@ -44,16 +44,25 @@ jobs:
           go-version: stable
           cache: false
 
+      - name: Resolve Go cache paths
+        id: go-cache-paths
+        run: |
+          gomodcache=$(go -C sample-go-app env GOMODCACHE)
+          gocache=$(go -C sample-go-app env GOCACHE)
+          mkdir -p "$gomodcache" "$gocache"
+          echo "gomodcache=$gomodcache" >> "$GITHUB_OUTPUT"
+          echo "gocache=$gocache" >> "$GITHUB_OUTPUT"
+
       - name: Go module cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          path: ~/go/pkg/mod
+          path: ${{ steps.go-cache-paths.outputs.gomodcache }}
           key: govulncheck-go-mod-${{ hashFiles('sample-go-app/tools/go.sum') }}
 
       - name: Go build cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          path: ~/.cache/go-build
+          path: ${{ steps.go-cache-paths.outputs.gocache }}
           key: govulncheck-go-build-${{ hashFiles('sample-go-app/**/*.go', 'sample-go-app/tools/go.mod', 'sample-go-app/tools/go.sum') }}
           restore-keys: |
             govulncheck-go-build-
