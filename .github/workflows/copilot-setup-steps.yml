@@ -54,7 +54,7 @@ jobs:
           pip install -r sample-py-app/requirements.txt
 
       - name: Install golangci-lint
-        run: make install-lint
+        run: make install/lint
 
       - name: Warm up govulncheck
         run: go -C sample-go-app tool -modfile tools/go.mod govulncheck -version
