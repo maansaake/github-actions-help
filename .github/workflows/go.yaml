@@ -18,7 +18,7 @@ jobs:
         # versions. Useful for library authors to make sure their code works with the latest versions of Go.
         go-version-alias: ["stable", "oldstable"]
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       # Disable the builtin caching since it uses the hash of the go.sum file
       # to determine if the cache is valid. This is not ideal since the go.sum
