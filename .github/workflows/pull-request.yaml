@@ -18,15 +18,15 @@ permissions:
 jobs:
   go:
     name: Golang
-    uses: ./.github/workflows/go.yaml
+    uses: ./.github/workflows/callable-go.yaml
 
   py:
     name: Python
-    uses: ./.github/workflows/py.yaml
+    uses: ./.github/workflows/callable-py.yaml
 
   image:
     name: Image
-    uses: ./.github/workflows/image.yaml
+    uses: ./.github/workflows/callable-image.yaml
     with:
       version: "${{ github.event.pull_request.number }}"
       push: false
