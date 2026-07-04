@@ -157,6 +157,8 @@ Before starting, ask the user:
 3. Shall automatic submission of Dependabot PRs be enabled for minor and patch updates, or should all updates require human review? If yes, let them know to hook up a github app token (like Jeeves) to the repository for auto-approval and merging of Dependabot PRs.
 4. What code-scanning should be done (if any)?
 
+Then, perform the following steps, while keeping in mind the user's responses:
+
 1. Create reactive workflows for main branch protection and pull request validation, similar to `main.yaml` and `pull-request.yaml`.
 2. Create callable workflows for linting, testing, building, and docker, depending on the repository's needs. These workflows should be designed to be reusable and accept inputs as necessary, similar to the example workflows provided.
 3. Set up a dependabot configuration file to manage dependencies across the relevant ecosystems, grouping updates as prescribed here, and splitting update-days as done in the example in this repository.
