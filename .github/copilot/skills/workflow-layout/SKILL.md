@@ -57,7 +57,7 @@ orchestrators do not need to grant more than `contents: read` by default.
 **Inputs:** none
 
 - Matrix over `go-version-alias: [stable, oldstable]` to catch regressions across Go
-  minor versions.
+  minor versions. Matrix versions should only be used for libraries; applications should only be tested against the latest stable version.
 - Uses a custom cache key `go-build-<sha>` with restore prefix `go-build-` to avoid
   invalidating the cache on unrelated changes.
 - Steps: checkout → setup-go (cache disabled) → restore cache → `go mod download` →
