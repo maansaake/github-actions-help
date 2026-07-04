@@ -141,31 +141,26 @@ Dependabot runs weekly checks across four ecosystems, each grouped into `minor` 
 
 - **All action `uses:` references are pinned to a full commit SHA** with a version comment,
   e.g. `actions/checkout@<sha> # v6.0.2`. Never use a mutable tag or branch.
-- **Permissions are declared at the job level** in every workflow (principle of least
-  privilege). Orchestrators declare `contents: read; packages: write; security-events: write`
-  to cover all reusable jobs they call.
-- **Reusable workflows carry their own permissions** so that the caller does not need to
-  grant extra permissions explicitly.
-- **Image is never pushed during CI**; it is only pushed when triggered by a GitHub release.
+- **Permissions are declared in every workflow file**; callers of reusable workflows need to ensure enough
+  permissions are granted to the `GITHUB_TOKEN` for the reusable workflow to run.
+- **Image is never pushed during CI**; it is only pushed when triggered by a GitHub release. This may or  
+  may not be correct for other repositories. Alternatively, a repository could specify a separate release workflow to react to release publishing events, and call the `callable-image.yaml` workflow with `push: true` to push the image to the registry.
+- **Code scanning is in a dedicated workflow**; this enables code-scanning to be run independently of the 
+  orchestrator workflows, and allows for more flexible scheduling (e.g., nightly runs) without affecting
+  the main CI flow. It also prevents configuration mismatch errors in PRs.
 
 ## Adopting this layout in another repository
 
-1. Copy `go.yaml`, `py.yaml`, and `image.yaml` into your repo's `.github/workflows/`.
-   Adjust the matrix versions and working directories as needed.
-2. Create `main.yaml` and `pull-request.yaml` calling those reusable workflows (use
-   `./.github/workflows/<file>.yaml` for same-repo calls).
-3. Copy `lint.yaml` if you are using Go; replace `golangci-lint-action` with your own
-   linter otherwise.
-4. Optionally add `auto-update-pr-branches.yaml` (requires a GitHub App token with
-   `pull-requests: write` and `contents: write`).
-5. Optionally add `dependabot-auto-approve.yaml` using the same GitHub App token.
-6. Configure `dependabot.yml` for the ecosystems you use.
+Before starting, ask the user:
+1. What programming languages and ecosystems are used in the repository? (e.g., Go, Python, Docker, etc.)
+2. Will there be docker images built and pushed to a registry? If so, which registry?
+3. Shall automatic submission of Dependabot PRs be enabled for minor and patch updates, or should all updates require human review? If yes, let them know to hook up a github app token (like Jeeves) to the repository for auto-approval and merging of Dependabot PRs.
+4. What code-scanning should be done (if any)?
 
-Alternatively, reference the reusable workflows in this repository **directly** from your
-own orchestrator without copying:
-
-```yaml
-jobs:
-  go:
-    uses: maansaake/github-actions-help/.github/workflows/go.yaml@main
-```
+1. Create reactive workflows for main branch protection and pull request validation, similar to `main.yaml` and `pull-request.yaml`.
+2. Create callable workflows for linting, testing, building, and docker, depending on the repository's needs. These workflows should be designed to be reusable and accept inputs as necessary, similar to the example workflows provided.
+3. Set up a dependabot configuration file to manage dependencies across the relevant ecosystems, grouping updates as prescribed here, and splitting update-days as done in the example in this repository.
+4. Ensure that all action references are pinned to specific commit SHAs, and that permissions are declared in every workflow file. Always default to use the latest available external actions when creating the workflow files initially.
+5. Create auto-approve workflow for dependabot PRs, similar to `dependabot-auto-approve.yaml`, to automatically approve and merge minor and patch updates, while leaving major updates for human review.
+6. Create a code scanning workflow similar to `code-scanning.yaml` to run static analysis tools and upload SARIF reports to GitHub Code Scanning. This allows for independent scheduling and execution of code scanning without interfering with the main CI flow.
+7. Add auto-updating workflow for PR branches, similar to `auto-update-pr-branches.yaml`, to keep pull requests up to date with the main branch after any push events. This ensures that PRs are always tested against the latest codebase and reduces merge conflicts.
